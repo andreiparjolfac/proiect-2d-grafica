@@ -19,6 +19,7 @@ static GLdouble h = 0.0;
 static GLdouble alpha = 0.1;
 static GLdouble step = 0.1;
 static GLdouble rotationAngle = 0.0f;
+static GLdouble rotationStep = 0.1f;
 
 static GLdouble destX;
 static GLdouble destY;
@@ -172,11 +173,17 @@ void miscas(void)
 		dx = -viteza_animatie;
 		dy = -dy;
 	}
-	
+		
+	cout << rotationStep << endl;
 
-	rotationAngle += 0.02f;
-	if (rotationAngle > 360.0f)
-		rotationAngle -= 360.0f;
+	if (dy>  0) {
+		rotationStep = abs(rotationStep);
+	}
+	else {
+		rotationStep = -abs(rotationStep);
+	}
+
+
 	
 
 	
@@ -186,10 +193,12 @@ void miscas(void)
 		cout << c1.coordX + i << endl;
 		cout << c1.coordY + j << endl;
 		cout << "am ajuns";
+		rotationAngle = 0;
 	}
 	else {
 		i = i + dx;
 		j = j + dy;
+		rotationAngle += rotationStep;
 	}
 
 	glutPostRedisplay();
@@ -199,7 +208,7 @@ void mouse(int button, int state, int x, int y)
 	switch (button) {
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
-			c1.zboara_la(600, 600);
+			c1.zboara_la(300, 300);
 			glutIdleFunc(miscas);
 		break;
 	default:
