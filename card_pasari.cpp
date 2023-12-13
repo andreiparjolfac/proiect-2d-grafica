@@ -219,7 +219,6 @@ void mouse(int button, int state, int x, int y)
 void main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-	srand(time(NULL));
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(screenX, screenY);
 	glutInitWindowPosition(100, 100);
