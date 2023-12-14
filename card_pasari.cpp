@@ -19,7 +19,7 @@ static GLdouble h = 0.0;
 static GLdouble alpha = 0.1;
 static GLdouble step = 0.1;
 static GLdouble rotationAngle = 0.0f;
-static GLdouble rotationStep = 0.1f;
+static GLdouble rotationStep = 0.05f;
 static GLdouble linear = 0.0f;
 static GLdouble destX;
 static GLdouble destY;
@@ -28,6 +28,10 @@ static GLdouble dx;
 static GLdouble dy;
 
 GLuint texturaID, fundalTexturaID;
+
+random_device rd;
+mt19937 generator(rd());
+uniform_real_distribution<double> dis(0.0, 1.0);
 
 class Pasare {
 public:
@@ -71,13 +75,12 @@ public:
 class Card {
 public:
 	vector<Pasare*> pasari;
-	double coordX, coordY;
+	double coordX, coordY, raza_card;
 	Card(int nr_pasari, double raza_card) {
-		random_device rd;
-		mt19937 generator(rd());
-		uniform_real_distribution<double> dis(0.0, 1.0);
+
 		double rx = dis(generator);
 		double ry = dis(generator);
+		this->raza_card = raza_card;
 		coordX = raza_card * (1 - rx) + rx * (screenX - raza_card);
 		coordY = raza_card * (1 - ry) + ry * (screenY - raza_card);
 		for (int i = 0; i < nr_pasari; i++) {
@@ -143,7 +146,7 @@ void deseneaza(void)
 
 
 		c1.pasari[i]->deseneaza_pasare();
-		cout << "as";
+		//cout << "a";
 	}
 
 
@@ -182,15 +185,32 @@ void miscas(void)
 	}
 	else {
 		if((destY<c1.coordY and destX<c1.coordX)  or (destY > c1.coordY and destX < c1.coordX))
-		dy = -1 * ((destY - c1.coordY) / (destX - c1.coordX) + 5 * cos(linear/3)) * viteza_animatie;
+		dy = -1 * ((destY - c1.coordY) / (destX - c1.coordX) + 3 * cos(linear/3)) * viteza_animatie;
 		if((destY < c1.coordY and destX > c1.coordX) or (destY > c1.coordY and destX > c1.coordX))
-		dy =  ((destY - c1.coordY) / (destX - c1.coordX) + 5 * cos(linear/3)) * viteza_animatie;
+		dy =  ((destY - c1.coordY) / (destX - c1.coordX) + 3 * cos(linear/3)) * viteza_animatie;
 
+		if (dy < 0) {
+			rotationStep = -abs(rotationStep);
+		}
+		else {
+			rotationStep = abs(rotationStep);
+		}
+
+	}
+
+	if (abs(c1.coordY + j - destY) < 5 and abs(c1.coordX + i - destX) < 5) {
+		
+		c1.coordX += i;
+		c1.coordY += j;
+		i = 0;
+		j = 0;
+		rotationAngle = 0;
 	}
 
 	i += dx;
 	linear += viteza_animatie;
 	j += dy;
+	rotationAngle += rotationStep;
 
 	glutPostRedisplay();
 }
@@ -199,8 +219,15 @@ void mouse(int button, int state, int x, int y)
 	switch (button) {
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
-			c1.zboara_la(x, 600.0-y);
+			c1.zboara_la(x, screenY-y);
 		glutIdleFunc(miscas);
+		break;
+	case GLUT_RIGHT_BUTTON:
+		if (state == GLUT_DOWN and (abs(c1.coordX - x) < c1.raza_card) and (abs(c1.coordY - (screenY- y)) < c1.raza_card)) {
+			c1.zboara_la(dis(generator) * screenX, dis(generator) * screenY);
+
+			glutIdleFunc(miscas);
+		}
 		break;
 	default:
 		break;
