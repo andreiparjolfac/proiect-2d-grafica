@@ -20,7 +20,7 @@ static GLdouble alpha = 0.1;
 static GLdouble step = 0.1;
 static GLdouble rotationAngle = 0.0f;
 static GLdouble rotationStep = 0.1f;
-
+static GLdouble linear = 0.0f;
 static GLdouble destX;
 static GLdouble destY;
 
@@ -44,7 +44,7 @@ public:
 		if (zboara) {
 			offsetx += dx;
 			offsety += dy;
-			glTranslated(i, j, 0.0);
+			//glTranslated(i, j, 0.0);
 			glTranslated(offsetx + 20, offsety + 20, 0.0);
 			glRotated(rotationAngle, 0.0, 0.0, 1.0);
 			glTranslated(-offsetx - 20, -offsety - 20, 0.0);
@@ -139,7 +139,7 @@ void deseneaza(void)
 	deseneazaFundal();
 	glLoadIdentity();
 
-	for (int i = 0; i < c1.pasari.size(); i++) {		
+	for (int i = 0; i < c1.pasari.size(); i++) {
 
 
 		c1.pasari[i]->deseneaza_pasare();
@@ -165,41 +165,32 @@ void reshape(int w, int h)
 }
 void miscas(void)
 {
-	dy = ((destY - c1.coordY) / (destX - c1.coordX) + 5*cos(i/3)) * viteza_animatie;
-	if (c1.coordX < destX) {
-		dx = viteza_animatie;
-		
-	}else{
-		dx = -viteza_animatie;
-		dy = -dy;
-	}
-		
-	cout << rotationStep << endl;
-
-	if (dy>  0) {
-		rotationStep = abs(rotationStep);
-	}
-	else {
-		rotationStep = -abs(rotationStep);
-	}
-
-
-	
-
-	
-	if (abs(c1.coordX+i - destX) < 10 and abs(c1.coordY+j - destY) < 10) {
+	if (abs(c1.coordX + i -destX) < 5) {
 		dx = 0;
-		dy = 0;
-		cout << c1.coordX + i << endl;
-		cout << c1.coordY + j << endl;
-		cout << "am ajuns";
-		rotationAngle = 0;
 	}
 	else {
-		i = i + dx;
-		j = j + dy;
-		rotationAngle += rotationStep;
+		if (destX > c1.coordX) {
+			dx = viteza_animatie;
+		}
+		else {
+			dx = -viteza_animatie;
+		}
 	}
+
+	if(abs(c1.coordY+j -destY)<5){
+		dy = 0;
+	}
+	else {
+		if((destY<c1.coordY and destX<c1.coordX)  or (destY > c1.coordY and destX < c1.coordX))
+		dy = -1 * ((destY - c1.coordY) / (destX - c1.coordX) + 5 * cos(linear/3)) * viteza_animatie;
+		if((destY < c1.coordY and destX > c1.coordX) or (destY > c1.coordY and destX > c1.coordX))
+		dy =  ((destY - c1.coordY) / (destX - c1.coordX) + 5 * cos(linear/3)) * viteza_animatie;
+
+	}
+
+	i += dx;
+	linear += viteza_animatie;
+	j += dy;
 
 	glutPostRedisplay();
 }
@@ -208,8 +199,8 @@ void mouse(int button, int state, int x, int y)
 	switch (button) {
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
-			c1.zboara_la(300, 300);
-			glutIdleFunc(miscas);
+			c1.zboara_la(x, 600.0-y);
+		glutIdleFunc(miscas);
 		break;
 	default:
 		break;
