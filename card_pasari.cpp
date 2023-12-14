@@ -185,15 +185,15 @@ void miscas(void)
 	}
 	else {
 		if((destY<c1.coordY and destX<c1.coordX)  or (destY > c1.coordY and destX < c1.coordX))
-		dy = -1 * ((destY - c1.coordY) / (destX - c1.coordX) + 3 * cos(linear/3)) * viteza_animatie;
+		dy = -1 * ((destY - c1.coordY) / (destX - c1.coordX) + 3 * cos(-linear/3)) * viteza_animatie;
 		if((destY < c1.coordY and destX > c1.coordX) or (destY > c1.coordY and destX > c1.coordX))
 		dy =  ((destY - c1.coordY) / (destX - c1.coordX) + 3 * cos(linear/3)) * viteza_animatie;
 
 		if (dy < 0) {
-			rotationStep = -abs(rotationStep);
+			rotationAngle += -abs(rotationStep);
 		}
 		else {
-			rotationStep = abs(rotationStep);
+			rotationAngle += abs(rotationStep);
 		}
 
 	}
@@ -210,7 +210,7 @@ void miscas(void)
 	i += dx;
 	linear += viteza_animatie;
 	j += dy;
-	rotationAngle += rotationStep;
+
 
 	glutPostRedisplay();
 }
