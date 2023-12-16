@@ -211,7 +211,6 @@ void miscas(void) {
         //rotationAngle = 0;
     }
 
-    //TO-DO: repara dracu aripile alea sa mearga cum trebe
     if ((lastDy > 0 && dy < 0) || (lastDy < 0 && dy > 0))
         pozAripiPasare = 1 - abs(pozAripiPasare);
 
